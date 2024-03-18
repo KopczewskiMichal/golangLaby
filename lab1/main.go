@@ -11,11 +11,10 @@ func main() {
 	start := time.Now()
 	// changeAfterRemove := flag.Bool("strategy", false, "Should player change box after one was taken?")
 	rounds := flag.Uint("c", 1, "Number of rounds to play")
-	numberOfBoxes := flag.Int("n", 3, "Number of boxes, musst be 3 or grater")
-	removeBoxesCount := flag.Int("remove", 3, "Number of boxes to remove after player picks")
+	numberOfBoxes := flag.Int("n", 3, "Number of boxes, 3 or grater")
+	removeBoxesCount := flag.Int("remove", 1, "Number of boxes to remove after player picks")
 	flag.Parse()
 
-	// fmt.Println(serialTest(*rounds, *changeAfterRemove))
 	fmt.Println(serialTest(*rounds, false, *numberOfBoxes, *removeBoxesCount)*100, "%")
 	fmt.Println(serialTest(*rounds, true, *numberOfBoxes, *removeBoxesCount)*100, "%")
 	elapsed := time.Since(start)
@@ -38,42 +37,39 @@ func playSimpleGame(changeAfterRemove bool) bool {
 		return boxes[pickedBoxIndex]
 
 	}
-	fmt.Println("Return wymagany przez składnie")
+	fmt.Println("Return wymagany przez kompilator")
 	return false
 }
 
 func playNBoxexGame(changeAfterRemove bool, numberOfBoxes int, removeBoxesCount int) bool {
-	boxes := make([]bool, numberOfBoxes)
-	boxes[rand.IntN(numberOfBoxes)] = true
-	switch pickedBoxIndex := rand.IntN(numberOfBoxes); changeAfterRemove {
+	prizeIndex := rand.IntN(numberOfBoxes)
+	pickedBoxIndex := rand.IntN(numberOfBoxes)
+	switch changeAfterRemove {
 	case true:
 		// Tworzymy maskę
 		mask := make([]bool, numberOfBoxes)
-		for removedCount := 0; removedCount < removeBoxesCount; {
+		for removedCount := 0; removedCount <= removeBoxesCount; {
 			randomIndex := rand.IntN(numberOfBoxes)
-			if !boxes[randomIndex] && !mask[randomIndex] {
+			if randomIndex != prizeIndex && !mask[randomIndex] {
 				mask[randomIndex] = true
 				removedCount++
 			}
 		}
-		//Losujemy pudełko które ostatecznie wybierzemy
+		// fmt.Println(mask[prizeIndex])
+		// printArr(mask)
+
 		newPickedIndex := rand.IntN(numberOfBoxes)
-		for {
-			if !mask[newPickedIndex] && newPickedIndex != pickedBoxIndex {
-				break
-			} else {
-
-				newPickedIndex = rand.IntN(numberOfBoxes)
-			}
+		for newPickedIndex == pickedBoxIndex || mask[newPickedIndex] {
+			newPickedIndex = rand.IntN(numberOfBoxes)
 		}
-		return boxes[newPickedIndex]
+		// fmt.Println(newPickedIndex, pickedBoxIndex, prizeIndex, mask[newPickedIndex])
+		return newPickedIndex == prizeIndex
 
-	// Jeśli nie zmieniamy wyboru po odsłonięciu pudełek nie musimy wiedzieć któr otwarto
+		// Jeśli nie zmieniamy wyboru po odsłonięciu pudełek nie musimy wiedzieć które otwarto
 	case false:
-		return boxes[pickedBoxIndex]
-
+		return pickedBoxIndex == prizeIndex
 	}
-	fmt.Println("Return wymagany przez składnie")
+	fmt.Println("Return wymagany przez kompilator")
 	return false
 }
 
@@ -95,4 +91,14 @@ func serialTest(gamesToPlay uint, changeAfterRemove bool, numberOfBoxes int, rem
 	}
 	fmt.Printf("Pozytywne wyniki: %d Negatywne: %d dla strategi %t\n", positiveCount, gamesToPlay-positiveCount, changeAfterRemove)
 	return float64(positiveCount) / float64(gamesToPlay)
+}
+
+func printArr(arr []bool) {
+	fmt.Println("Start")
+	for index := range arr {
+		fmt.Print(arr[index], ", ")
+
+	}
+	// fmt.Println("koniec")
+	fmt.Println()
 }
