@@ -48,22 +48,26 @@ func playNBoxexGame(changeAfterRemove bool, numberOfBoxes int, removeBoxesCount 
 	case true:
 		// Tworzymy maskę
 		mask := make([]bool, numberOfBoxes)
-		for removedCount := 0; removedCount <= removeBoxesCount; {
+		for removedCount := 0; removedCount < removeBoxesCount; {
 			randomIndex := rand.IntN(numberOfBoxes)
 			if randomIndex != prizeIndex && !mask[randomIndex] {
 				mask[randomIndex] = true
 				removedCount++
 			}
 		}
-		// fmt.Println(mask[prizeIndex])
-		// printArr(mask)
 
-		newPickedIndex := rand.IntN(numberOfBoxes)
-		for newPickedIndex == pickedBoxIndex || mask[newPickedIndex] {
-			newPickedIndex = rand.IntN(numberOfBoxes)
+		result := false
+		for i := 0; i < numberOfBoxes; i++ {
+			if i != pickedBoxIndex && !mask[i] {
+				if prizeIndex == i {
+					result = true
+				}
+				// break
+			}
+
 		}
-		// fmt.Println(newPickedIndex, pickedBoxIndex, prizeIndex, mask[newPickedIndex])
-		return newPickedIndex == prizeIndex
+
+		return result
 
 		// Jeśli nie zmieniamy wyboru po odsłonięciu pudełek nie musimy wiedzieć które otwarto
 	case false:
