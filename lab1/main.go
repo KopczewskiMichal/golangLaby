@@ -15,7 +15,7 @@ func main() {
 	removeBoxesCount := flag.Int("remove", 1, "Number of boxes to remove after player picks")
 	flag.Parse()
 
-	fmt.Println(serialTest(*rounds, false, *numberOfBoxes, *removeBoxesCount)*100, "%")
+	// fmt.Println(serialTest(*rounds, false, *numberOfBoxes, *removeBoxesCount)*100, "%")
 	fmt.Println(serialTest(*rounds, true, *numberOfBoxes, *removeBoxesCount)*100, "%")
 	elapsed := time.Since(start)
 	fmt.Printf("Gra toczy się dla %d pudełek\n", *numberOfBoxes)
@@ -56,13 +56,17 @@ func playNBoxexGame(changeAfterRemove bool, numberOfBoxes int, removeBoxesCount 
 			}
 		}
 
+		fmt.Println(prizeIndex)
+		printArr(mask)
+
 		result := false
 		for i := 0; i < numberOfBoxes; i++ {
 			if i != pickedBoxIndex && !mask[i] {
 				if prizeIndex == i {
 					result = true
 				}
-				// break
+				break
+				
 			}
 
 		}
